@@ -1,0 +1,8 @@
+packages required.
+
+jupyter-lab / jupyter-notebook.
+python=3.10.4 (but any python3.6+ should work)
+torch=1.12.1
+matplotlib=3.5.3
+pandas=2.12
+scipy=1.9.1
