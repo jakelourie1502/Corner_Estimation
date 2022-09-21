@@ -222,8 +222,11 @@ def create_training_set(uniques_leagues, only_train_df,bootstrap_value = 10, rho
                 
                 perform_update(leagues, match, l, rho=rho, rho_league=rho_league, zero_means=zero_means)
                     
-                if home_team.total_count > bootstrap_value and away_team.total_count > bootstrap_value:
-                    x.append([*home_stats, *away_stats, l.idx]) #, l.home_mean, l.away_mean])
+                if home_team.home_count > bootstrap_value and away_team.away_count > bootstrap_value:
+                    lIDonehot = [0]*12
+                    if l.idx != 0:
+                        lIDonehot[int(l.idx-1)] = 1
+                    x.append([*home_stats, *away_stats, *lIDonehot, l.idx]) #, l.home_mean, l.away_mean])
                     y.append([match[1]['Home_Corners'],match[1]['Away_Corners'],match[1]['total_corners']])
 
                     ##### appending dataset
@@ -261,7 +264,10 @@ def create_val_set(unique_leagues, val_df, leagues,zero_means):
                 #extract values from the leagues object (from training)
                 home_stats = get_x_values_one_team(home_team)
                 away_stats = get_x_values_one_team(away_team)
-                x.append([*home_stats, *away_stats,l.idx])#, leagues[league].home_mean, leagues[league].away_mean])
+                lIDonehot = [0]*12
+                if l.idx != 0:
+                    lIDonehot[int(l.idx-1)] = 1
+                x.append([*home_stats, *away_stats, *lIDonehot,l.idx]) #, l.home_mean, l.away_mean])
                 y.append([match[1]['Home_Corners'],match[1]['Away_Corners'],match[1]['total_corners']])
                 
                 for r, stat in zip(range(8), [*home_stats[:4],*away_stats[:4]]):
