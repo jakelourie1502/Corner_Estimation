@@ -25,6 +25,7 @@ def train_model_thresholds(model, train_gen, val_gen, loss_func, loss_func_val, 
         for item in train_gen:
             x, y_1h, y_thresh  = item
             x=x.float()
+            x = x[:,:-1]
             y = y_thresh
             output = model(x) #bn x 8
             y = y.float()
@@ -48,6 +49,7 @@ def train_model_thresholds(model, train_gen, val_gen, loss_func, loss_func_val, 
         for item in val_gen:
             x, y_1h, y_thresh  = item
             x=x.float()
+            x = x[:,:-1]
             y = y_thresh
             output = model(x) #bn x 8
             loss = loss_func_val((output),y)
@@ -78,6 +80,7 @@ def train_model_softmax(model, train_gen, val_gen, loss_func, loss_func_val, opt
         for item in train_gen:
             x, y_1h, y_thresh  = item
             x=x.float()
+            x = x[:,:-1]
             y = y_1h.float()
             y_thresh=y_thresh.numpy()
             
@@ -116,6 +119,7 @@ def train_model_softmax(model, train_gen, val_gen, loss_func, loss_func_val, opt
             for item in val_gen:
                 x, y_1h, y_thresh  = item
                 x=x.float()
+                x = x[:,:-1]
                 y = y_1h.float()
                 y_thresh=y_thresh.numpy()
 
@@ -164,6 +168,7 @@ def train_model_poisson(model, train_gen, val_gen, loss_func, loss_func_val, opt
         for item in train_gen:
             x, y_1h, y_thresh = item
             x=x.float()
+            x = x[:,:-1]
             y = torch.argmax(y_1h,1).float().reshape(-1,1) #converts one hot to a single value.
             y_thresh=y_thresh.numpy()
             
@@ -171,8 +176,9 @@ def train_model_poisson(model, train_gen, val_gen, loss_func, loss_func_val, opt
             output = model(x) #bn x 1 (one value of lambda for each item in the batch)
             # if theta == False: loss = loss_func(output, y)
             # else: loss = loss_func(output, y, theta)
+
             loss = loss_func(output, y)
-            
+
             #calc predictions for individual corner amounts
             predictions, argmax = prediction_function_poisson(output, max_val, theta)
             correct_vals = torch.sum(torch.where(argmax == y.reshape(-1), 1,0))
@@ -203,6 +209,7 @@ def train_model_poisson(model, train_gen, val_gen, loss_func, loss_func_val, opt
             for item in val_gen:
                 x, y_1h, y_thresh = item
                 x=x.float()
+                x = x[:,:-1]
                 y = torch.argmax(y_1h,1).float().reshape(-1,1) #converts one hot to a single value.
                 y_thresh=y_thresh.numpy()
 
